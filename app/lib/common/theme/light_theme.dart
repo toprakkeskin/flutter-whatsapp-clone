@@ -15,6 +15,9 @@ ThemeData lightTheme() {
     ),
     scaffoldBackgroundColor: Coloors.backgroundLight,
     appBarTheme: const AppBarTheme(
+      titleTextStyle: TextStyle(
+        fontSize: 18,
+      ),
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,

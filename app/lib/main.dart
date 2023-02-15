@@ -3,8 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/common/routes/routes.dart';
-import 'package:whatsapp_clone/feature/auth/pages/user_info_page.dart';
-import 'package:whatsapp_clone/feature/welcome/pages/welcome_page.dart';
 
 import 'common/theme/dark_theme.dart';
 import 'common/theme/light_theme.dart';
@@ -31,7 +29,7 @@ class MyApp extends StatelessWidget {
       theme: lightTheme(),
       darkTheme: darkTheme(),
       themeMode: ThemeMode.system,
-      home: const UserInfoPage(),
+      initialRoute: Routes.welcome,
       onGenerateRoute: Routes.onGenerateRoute,
     );
   }

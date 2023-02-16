@@ -15,12 +15,16 @@ ThemeData lightTheme() {
     ),
     scaffoldBackgroundColor: Coloors.backgroundLight,
     appBarTheme: const AppBarTheme(
+      backgroundColor: Coloors.greenLight,
       titleTextStyle: TextStyle(
         fontSize: 18,
       ),
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
+      ),
+      iconTheme: IconThemeData(
+        color: Colors.white,
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(

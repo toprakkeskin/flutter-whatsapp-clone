@@ -31,8 +31,13 @@ class Routes {
           ),
         );
       case userInfo:
+        final Map<String, dynamic> arguments =
+            settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (context) => const UserInfoPage(),
+          builder: (context) => UserInfoPage(
+            profileImageUrl: arguments['profileImageUrl'] as String,
+            username: arguments['username'] as String,
+          ),
         );
       case home:
         return MaterialPageRoute(

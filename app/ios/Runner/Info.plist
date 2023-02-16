@@ -15,6 +15,8 @@
 	<string>This app requires access to the photo library.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires access to camera.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This app requires access to the contact list</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

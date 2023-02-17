@@ -21,6 +21,10 @@ class AuthController {
 
   AuthController({required this.authRepository, required this.ref});
 
+  void updateUserPresence() {
+    return authRepository.updateUserPresence();
+  }
+
   Future<UserModel?> getCurrentUserInfo() async {
     return await authRepository.getCurrentUserInfo();
   }

@@ -51,6 +51,7 @@ class ContactsRepository {
                 username: contact.displayName,
                 active: false,
                 profileImageUrl: '',
+                lastSeen: DateTime.now().millisecondsSinceEpoch,
                 phoneNumber: contactPhone,
               ),
             );

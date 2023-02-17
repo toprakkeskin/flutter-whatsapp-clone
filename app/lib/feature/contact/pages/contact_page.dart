@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_clone/common/extension/custom_theme_extension.dart';
 import 'package:whatsapp_clone/common/models/user_model.dart';
+import 'package:whatsapp_clone/common/routes/routes.dart';
 import 'package:whatsapp_clone/common/utils/coloors.dart';
 import 'package:whatsapp_clone/common/widgets/custom_icon_button.dart';
 import 'package:whatsapp_clone/feature/contact/controllers/contacts_controller.dart';
+import 'package:whatsapp_clone/feature/contact/widgets/contact_card.dart';
 
 class ContactPage extends ConsumerWidget {
   const ContactPage({super.key});
@@ -69,111 +71,55 @@ class ContactPage extends ConsumerWidget {
                 phoneContact = allContacts[1][index - allContacts[0].length];
               }
 
-              return index < allContacts[0].length
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (index == 0)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 10,
-                            ),
-                            child: Text(
-                              'Contacts on WhatsApp',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: context.theme.greyColor,
-                              ),
-                            ),
-                          ),
-                        ListTile(
-                          contentPadding: const EdgeInsets.only(
-                              left: 20, right: 10, top: 0, bottom: 0),
-                          dense: true,
-                          leading: CircleAvatar(
-                            backgroundColor:
-                                context.theme.greyColor!.withOpacity(0.3),
-                            radius: 20,
-                            backgroundImage: firebaseContact
-                                    .profileImageUrl.isNotEmpty
-                                ? NetworkImage(firebaseContact.profileImageUrl)
-                                : null,
-                            child: firebaseContact.profileImageUrl.isEmpty
-                                ? const Icon(
-                                    Icons.person,
-                                    size: 30,
-                                    color: Colors.white70,
-                                  )
-                                : null,
-                          ),
-                          title: Text(
-                            firebaseContact.username,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          subtitle: Text(
-                            'Hey there! I am using WhatsApp.',
-                            style: TextStyle(
-                              color: context.theme.greyColor,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...buildActionList(rendered: index == 0, actions: [
+                    buildActionListTile(
+                      leading: Icons.group,
+                      text: 'New Group',
+                    ),
+                    buildActionListTile(
+                      leading: Icons.contacts,
+                      text: 'New Contact',
+                      trailing: Icons.qr_code,
                     )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (index == allContacts[0].length)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 10,
-                            ),
-                            child: Text(
-                              'Contacts on Phone',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: context.theme.greyColor,
-                              ),
-                            ),
-                          ),
-                        ListTile(
-                          onTap: () => shareSmsLink(phoneContact.phoneNumber),
-                          contentPadding: const EdgeInsets.only(
-                              left: 20, right: 10, top: 0, bottom: 0),
-                          dense: true,
-                          leading: CircleAvatar(
-                            backgroundColor:
-                                context.theme.greyColor!.withOpacity(0.3),
-                            radius: 20,
-                            child: const Icon(
-                              Icons.person,
-                              size: 30,
-                              color: Colors.white70,
-                            ),
-                          ),
-                          title: Text(
-                            phoneContact.username,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          trailing: TextButton(
-                            onPressed: () =>
-                                shareSmsLink(phoneContact.phoneNumber),
-                            style: TextButton.styleFrom(
-                              foregroundColor: Coloors.greenDark,
-                            ),
-                            child: const Text('INVITE'),
-                          ),
+                  ]),
+                  // If it's the beginning of a group show the group title
+                  if (index == 0 || index == allContacts[0].length)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      child: Text(
+                        index == 0
+                            ? 'Contacts on WhatsApp'
+                            : 'Contacts on Phone',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: context.theme.greyColor,
                         ),
-                      ],
-                    );
+                      ),
+                    ),
+
+                  // Show the contact card according to group it belongs to
+                  index < allContacts[0].length
+                      ? ContactCard(
+                          contactSource: firebaseContact,
+                          onTap: () {
+                            Navigator.of(context).pushNamed(
+                              Routes.chat,
+                              arguments: firebaseContact,
+                            );
+                          },
+                        )
+                      : ContactCard(
+                          contactSource: phoneContact,
+                          onTap: () => shareSmsLink(phoneContact.phoneNumber),
+                        )
+                ],
+              );
             },
           );
         },
@@ -187,6 +133,43 @@ class ContactPage extends ConsumerWidget {
             ),
           );
         },
+      ),
+    );
+  }
+
+  buildActionList({required bool rendered, required List<Widget> actions}) {
+    return rendered ? actions : [];
+  }
+
+  ListTile buildActionListTile({
+    required IconData leading,
+    required String text,
+    IconData? trailing,
+  }) {
+    return ListTile(
+      contentPadding: const EdgeInsets.only(
+        top: 10,
+        left: 20,
+        right: 20,
+      ),
+      leading: CircleAvatar(
+        radius: 20,
+        backgroundColor: Coloors.greenDark,
+        child: Icon(
+          leading,
+          color: Colors.white,
+        ),
+      ),
+      title: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      trailing: Icon(
+        trailing,
+        color: Coloors.greyDark,
       ),
     );
   }

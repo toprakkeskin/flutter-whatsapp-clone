@@ -40,8 +40,8 @@ class Routes {
             settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
           builder: (context) => UserInfoPage(
-            profileImageUrl: arguments['profileImageUrl'] as String,
-            username: arguments['username'] as String,
+            profileImageUrl: arguments['profileImageUrl'] as String?,
+            username: arguments['username'] as String?,
           ),
         );
       case contact:

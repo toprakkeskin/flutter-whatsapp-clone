@@ -15,24 +15,51 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
-  late Timer timer;
+class _HomePageState extends ConsumerState<HomePage>
+    with WidgetsBindingObserver {
+  Timer? timer;
+  bool _isInForeground = true;
 
-  updateUserPresence() {
-    ref.read(authControllerProvider).updateUserPresence();
+  // TODO move all these logic to the app-level
+  updateUserPresence(bool isActive) {
+    ref.read(authControllerProvider).updateUserPresence(isActive);
+  }
+
+  setupUpdateUserPresenceTimer() {
+    if (timer != null && timer!.isActive) timer?.cancel();
+    timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      updateUserPresence(_isInForeground);
+      if (_isInForeground) {
+        setState(() {});
+      } else {
+        timer.cancel();
+      }
+    });
   }
 
   @override
   void initState() {
-    updateUserPresence();
-    timer =
-        Timer.periodic(const Duration(minutes: 1), (timer) => setState(() {}));
+    WidgetsBinding.instance.addObserver(this);
+
+    updateUserPresence(_isInForeground);
+    setupUpdateUserPresenceTimer();
     super.initState();
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _isInForeground = state == AppLifecycleState.resumed;
+    if (_isInForeground) {
+      setupUpdateUserPresenceTimer();
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
   void dispose() {
-    timer.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+
+    timer!.cancel();
     super.dispose();
   }
 

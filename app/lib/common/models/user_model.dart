@@ -2,8 +2,8 @@ class UserModel {
   final String username;
   final String uid;
   final String profileImageUrl;
-  final bool active;
-  final int lastSeen;
+  final bool active; // TODO remove
+  final int lastSeen; // TODO remove
   final String phoneNumber;
   final List<String> groupId;
 

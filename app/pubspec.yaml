@@ -48,6 +48,9 @@ dependencies:
   flutter_contacts: ^1.1.6
   url_launcher: ^6.1.9
   firebase_database: ^10.0.13
+  intl: ^0.17.0
+  timeago: ^3.3.0
+  async: ^2.10.0
 
 dev_dependencies:
   flutter_test:

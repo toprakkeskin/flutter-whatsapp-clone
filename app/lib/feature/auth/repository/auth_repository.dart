@@ -30,7 +30,7 @@ class AuthRepository {
     required this.realtime,
   });
 
-  void updateUserPresence() async {
+  void updateUserPresence(bool isActive) async {
     Map<String, dynamic> online = {
       'active': true,
       'lastSeen': DateTime.now().millisecondsSinceEpoch
@@ -41,17 +41,24 @@ class AuthRepository {
       'lastSeen': DateTime.now().millisecondsSinceEpoch
     };
 
-    // TODO
+    DatabaseReference activityRef =
+        realtime.ref().child('${auth.currentUser!.uid}/activity');
+
+    if (isActive) {
+      await activityRef.set(online);
+    } else {
+      await activityRef.set(offline);
+    }
   }
 
   Future<UserModel?> getCurrentUserInfo() async {
     UserModel? user;
     final userInfo =
         await firestore.collection('users').doc(auth.currentUser?.uid).get();
-    if (userInfo.data() == null) {
-      return user;
+    if (userInfo.data() != null) {
+      user = UserModel.fromMap(userInfo.data()!);
+      updateUserPresence(true);
     }
-    user = UserModel.fromMap(userInfo.data()!);
     return user;
   }
 

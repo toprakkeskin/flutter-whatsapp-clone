@@ -2,46 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/common/models/user_activity_model.dart';
 import 'package:whatsapp_clone/common/models/user_model.dart';
+import 'package:whatsapp_clone/common/routes/routes.dart';
 import 'package:whatsapp_clone/common/widgets/custom_icon_button.dart';
 import 'package:whatsapp_clone/feature/auth/controller/auth_controller.dart';
+import 'package:whatsapp_clone/feature/chat/config/last_seen_timeago_lookup_messages.dart';
 import 'package:whatsapp_clone/feature/chat/repositories/user_activity_repository.dart';
 import 'package:timeago/timeago.dart' as timeago;
-
-// TODO move this into a separate file
-class MyCustomMessages implements timeago.LookupMessages {
-  @override
-  String prefixAgo() => '';
-  @override
-  String prefixFromNow() => '';
-  @override
-  String suffixAgo() => '';
-  @override
-  String suffixFromNow() => '';
-  @override
-  String lessThanOneMinute(int seconds) => 'recently';
-  @override
-  String aboutAMinute(int minutes) => '$minutes min';
-  @override
-  String minutes(int minutes) => '$minutes mins';
-  @override
-  String aboutAnHour(int minutes) => 'about an hour';
-  @override
-  String hours(int hours) => '$hours hours';
-  @override
-  String aDay(int hours) => 'about a day';
-  @override
-  String days(int days) => '$days days';
-  @override
-  String aboutAMonth(int days) => 'about a month';
-  @override
-  String months(int months) => '$months months';
-  @override
-  String aboutAYear(int year) => 'about a year';
-  @override
-  String years(int years) => '$years years';
-  @override
-  String wordSeparator() => ' ';
-}
 
 class ChatPage extends ConsumerStatefulWidget {
   const ChatPage({super.key, required this.user});
@@ -57,7 +23,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 
   @override
   void initState() {
-    timeago.setLocaleMessages('en_short', MyCustomMessages());
+    timeago.setLocaleMessages('en_short', LastSeenTimeAgoLookupMessages());
     super.initState();
   }
 

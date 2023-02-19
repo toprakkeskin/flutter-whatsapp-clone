@@ -50,6 +50,7 @@ class _HomePageState extends ConsumerState<HomePage>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _isInForeground = state == AppLifecycleState.resumed;
     if (_isInForeground) {
+      updateUserPresence(true);
       setupUpdateUserPresenceTimer();
     }
     super.didChangeAppLifecycleState(state);

@@ -67,6 +67,17 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     super.dispose();
   }
 
+  String getLastSeenMessage() {
+    if (userActivity == null) return '';
+    final lastSeen =
+        DateTime.fromMillisecondsSinceEpoch(userActivity!.lastSeen);
+    final now = DateTime.now();
+    print('Time diff: ${now.difference(lastSeen).inSeconds}');
+    return userActivity!.active && now.difference(lastSeen).inSeconds < 20
+        ? 'online'
+        : 'last seen ${timeago.format(lastSeen, locale: 'en_short')}';
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: Remove this. This is just for testing subscription to multiple users' activity
@@ -120,14 +131,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
             if (userActivity != null)
               FittedBox(
                 child: Text(
-                  userActivity!.active &&
-                          DateTime.fromMillisecondsSinceEpoch(
-                                      userActivity!.lastSeen)
-                                  .add(const Duration(seconds: 20))
-                                  .compareTo(DateTime.now()) >
-                              0
-                      ? 'online'
-                      : 'last seen ${timeago.format(DateTime.fromMillisecondsSinceEpoch(userActivity!.lastSeen), locale: 'en_short')}',
+                  getLastSeenMessage(),
                   style: const TextStyle(fontSize: 12),
                 ),
               ),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/common/models/user_activity_model.dart';
@@ -29,8 +31,45 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 
   @override
   void dispose() {
+    // todo fix "Looking up a deactivated widget's ancestor is unsafe." exception
     ref.read(userActivityDispatcherProvider).dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // This is just for testing subscription to multiple users' activity
+    // Get current logged in user and subscribe to user activity
+    ref.read(userInfoAuthProvider).whenData((currentUser) {
+      log('[CURRENT USER]: ${currentUser?.uid}');
+
+      if (!subscribed) {
+        final usersToSub = [widget.user.uid, currentUser!.uid];
+
+        UserActivityDispatcher userActivityDispatcher =
+            ref.read(userActivityDispatcherProvider);
+
+        // Get current states of user activity and set initial state
+        userActivityDispatcher
+            .getUserActivity(widget.user.uid)
+            .then((fetchedUserActivity) {
+          setState(
+            () {
+              userActivity = fetchedUserActivity;
+              log('[Chat -> set initial state -> user activity]: ${userActivity?.uid} ${userActivity?.active} ${userActivity?.lastSeen}');
+            },
+          );
+        });
+
+        // Subscribe for activity changes of multiple users
+        userActivityDispatcher.subToUsers(usersToSub);
+        setState(() {
+          subscribed = true;
+        });
+      }
+    });
+
+    super.didChangeDependencies();
   }
 
   String getLastSeenMessage() {
@@ -38,7 +77,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     final lastSeen =
         DateTime.fromMillisecondsSinceEpoch(userActivity!.lastSeen);
     final now = DateTime.now();
-    print('Time diff: ${now.difference(lastSeen).inSeconds}');
+    // log('Time diff: ${now.difference(lastSeen).inSeconds}');
     return userActivity!.active && now.difference(lastSeen).inSeconds < 20
         ? 'online'
         : 'last seen ${timeago.format(lastSeen, locale: 'en_short')}';
@@ -46,26 +85,16 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Remove this. This is just for testing subscription to multiple users' activity
-    ref.read(userInfoAuthProvider).whenData((currentUser) {
-      if (!subscribed) {
-        ref.read(userActivityDispatcherProvider).subToUsers([
-          widget.user.uid,
-          currentUser!.uid,
-        ]);
-        setState(() {
-          subscribed = true;
-        });
-      }
-    });
-
     ref.watch(userActivityProvider).whenData((userActivity) {
-      if (widget.user.uid == userActivity!.uid) return;
+      if (userActivity?.uid == null || widget.user.uid != userActivity!.uid) {
+        return;
+      }
+
       setState(() {
+        log('[Chat -> set state -> user activity]: ${userActivity.uid} ${userActivity.active} ${userActivity.lastSeen}');
         this.userActivity = userActivity;
       });
     });
-
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(

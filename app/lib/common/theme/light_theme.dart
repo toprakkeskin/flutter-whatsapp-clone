@@ -66,5 +66,13 @@ ThemeData lightTheme() {
       backgroundColor: Coloors.greenDark,
       foregroundColor: Colors.white,
     ),
+    listTileTheme: const ListTileThemeData(
+      iconColor: Coloors.greyDark,
+      tileColor: Coloors.backgroundLight,
+    ),
+    switchTheme: SwitchThemeData(
+      thumbColor: MaterialStateProperty.all(const Color(0xFF83939C)),
+      trackColor: MaterialStateProperty.all(const Color(0xFFDADFE2)),
+    ),
   );
 }

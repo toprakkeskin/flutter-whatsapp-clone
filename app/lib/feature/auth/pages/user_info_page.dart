@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -215,7 +216,8 @@ class _UserInfoPageState extends ConsumerState<UserInfoPage> {
                           image: imageGallery != null
                               ? MemoryImage(imageGallery!)
                               : widget.profileImageUrl != null
-                                  ? NetworkImage(widget.profileImageUrl!)
+                                  ? CachedNetworkImageProvider(
+                                      widget.profileImageUrl!)
                                   : FileImage(imageCamera!) as ImageProvider,
                         )
                       : null,

@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:whatsapp_clone/common/helper/last_seen_message.dart';
 import 'package:whatsapp_clone/common/models/user_activity_model.dart';
 import 'package:whatsapp_clone/common/models/user_model.dart';
 import 'package:whatsapp_clone/common/routes/routes.dart';
@@ -32,7 +34,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   @override
   void dispose() {
     // todo fix "Looking up a deactivated widget's ancestor is unsafe." exception
-    ref.read(userActivityDispatcherProvider).dispose();
+    // ref.read(userActivityDispatcherProvider).dispose();
     super.dispose();
   }
 
@@ -72,17 +74,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     super.didChangeDependencies();
   }
 
-  String getLastSeenMessage() {
-    if (userActivity == null) return '';
-    final lastSeen =
-        DateTime.fromMillisecondsSinceEpoch(userActivity!.lastSeen);
-    final now = DateTime.now();
-    // log('Time diff: ${now.difference(lastSeen).inSeconds}');
-    return userActivity!.active && now.difference(lastSeen).inSeconds < 20
-        ? 'online'
-        : 'last seen ${timeago.format(lastSeen, locale: 'en_short')}';
-  }
-
   @override
   Widget build(BuildContext context) {
     ref.watch(userActivityProvider).whenData((userActivity) {
@@ -103,34 +94,57 @@ class _ChatPageState extends ConsumerState<ChatPage> {
           child: Row(
             children: [
               const Icon(Icons.arrow_back),
-              CircleAvatar(
-                radius: 16,
-                backgroundImage: NetworkImage(widget.user.profileImageUrl),
+              Hero(
+                tag: 'profile',
+                child: Container(
+                  width: 32,
+                  // height: currentImageSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: CachedNetworkImageProvider(
+                          widget.user.profileImageUrl),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
         ),
         centerTitle: false,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              widget.user.username,
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 3),
-            if (userActivity != null)
-              FittedBox(
-                child: Text(
-                  getLastSeenMessage(),
-                  style: const TextStyle(fontSize: 12),
+        title: InkWell(
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              Routes.profile,
+              arguments: widget.user,
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  widget.user.username,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-          ],
+                const SizedBox(height: 3),
+                if (userActivity != null)
+                  FittedBox(
+                    child: Text(
+                      getLastSeenMessage(userActivity),
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
         actions: [
           CustomIconButton(

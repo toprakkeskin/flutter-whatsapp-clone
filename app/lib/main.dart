@@ -23,6 +23,8 @@ import 'common/theme/light_theme.dart';
   - Apply a new project structure
   - Add messaging functionalities
   - Add search functionality
+  - I18n
+  - Offline support (messages, search, profiles etc)
 */
 
 void main() async {

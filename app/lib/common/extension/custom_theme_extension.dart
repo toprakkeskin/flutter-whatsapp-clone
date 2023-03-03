@@ -16,6 +16,7 @@ class CustomThemeExtension extends ThemeExtension<CustomThemeExtension> {
     authAppbarTextColor: Coloors.greenLight,
     photoIconBgColor: Color(0xFFF0F2F3),
     photoIconColor: Color(0xFF9DAAB3),
+    profilePageBgColor: Color(0xFFF7F8FA),
   );
 
   static const darkMode = CustomThemeExtension(
@@ -27,6 +28,7 @@ class CustomThemeExtension extends ThemeExtension<CustomThemeExtension> {
     authAppbarTextColor: Color(0xFFE9EDEF),
     photoIconBgColor: Color(0xFF283339),
     photoIconColor: Color(0xFF61717B),
+    profilePageBgColor: Color(0xFF0B141A),
   );
 
   final Color? circleImageColor;
@@ -37,6 +39,7 @@ class CustomThemeExtension extends ThemeExtension<CustomThemeExtension> {
   final Color? authAppbarTextColor;
   final Color? photoIconBgColor;
   final Color? photoIconColor;
+  final Color? profilePageBgColor;
 
   const CustomThemeExtension({
     this.circleImageColor,
@@ -47,6 +50,7 @@ class CustomThemeExtension extends ThemeExtension<CustomThemeExtension> {
     this.authAppbarTextColor,
     this.photoIconBgColor,
     this.photoIconColor,
+    this.profilePageBgColor,
   });
 
   @override
@@ -59,6 +63,7 @@ class CustomThemeExtension extends ThemeExtension<CustomThemeExtension> {
     Color? authAppbarTextColor,
     Color? photoIconBgColor,
     Color? photoIconColor,
+    Color? profilePageBgColor,
   }) {
     return CustomThemeExtension(
       circleImageColor: circleImageColor ?? this.circleImageColor,
@@ -70,6 +75,7 @@ class CustomThemeExtension extends ThemeExtension<CustomThemeExtension> {
       authAppbarTextColor: authAppbarTextColor ?? this.authAppbarTextColor,
       photoIconBgColor: photoIconBgColor ?? this.photoIconBgColor,
       photoIconColor: photoIconColor ?? this.photoIconColor,
+      profilePageBgColor: profilePageBgColor ?? this.profilePageBgColor,
     );
   }
 
@@ -89,6 +95,8 @@ class CustomThemeExtension extends ThemeExtension<CustomThemeExtension> {
           Color.lerp(authAppbarTextColor, other.authAppbarTextColor, t),
       photoIconBgColor: Color.lerp(photoIconBgColor, other.photoIconBgColor, t),
       photoIconColor: Color.lerp(photoIconColor, other.photoIconColor, t),
+      profilePageBgColor:
+          Color.lerp(profilePageBgColor, other.profilePageBgColor, t),
     );
   }
 }
